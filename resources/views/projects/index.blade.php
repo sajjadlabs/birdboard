@@ -6,10 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    @foreach($projects as $project)
-        <h2>{{ $project->title }}</h2>
-
-        <p>{{ $project->description }}</p>
-    @endforeach
+    @forelse($projects as $project)
+        <a href="{{ $project->path() }}">
+            <h3>{{ $project->title }}</h3>
+        </a>
+    @empty
+        <li>Hooray! Index is empty!</li>
+    @endforelse
 </body>
 </html>

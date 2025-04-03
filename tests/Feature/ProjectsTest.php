@@ -33,3 +33,13 @@ test('a project requires a description', function () {
 
     $response->assertSessionHasErrors('description');
 });
+
+test('a user view a specific project', function () {
+    $this->withoutExceptionHandling();
+
+    $project = Project::factory()->create();
+
+    $this->get($project->path())
+        ->assertSee($project->title)
+        ->assertSee($project->description);
+});
