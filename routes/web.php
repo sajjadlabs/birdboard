@@ -12,4 +12,5 @@ Route::get('/', function () {
 Route::controller(ProjectController::class)->group(function () {
     Route::get('/projects', 'index');
     Route::post('/projects', 'store');
+    Route::get('projects/{project}', 'show');
 });
