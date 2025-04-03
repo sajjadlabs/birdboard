@@ -8,9 +8,9 @@ test('a guest cannot interact with projects', function () {
     $project = Project::factory()->create();
     $attributes = Project::factory()->raw();
 
-    $this->get('/projects')->assertRedirect('/');
-    $this->get($project->path())->assertRedirect('/');
-    $this->post('/projects', $attributes)->assertRedirect('/');
+    $this->get('/projects')->assertRedirect('/login');
+    $this->get($project->path())->assertRedirect('/login');
+    $this->post('/projects', $attributes)->assertRedirect('/login');
 });
 
 test('a user can see their own project', function () {
