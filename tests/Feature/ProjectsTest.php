@@ -4,17 +4,39 @@ use App\Models\Project;
 use App\Models\User;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('only authenticated users can create projects', function () {
+test('a guest cannot interact with projects', function () {
+    $project = Project::factory()->create();
     $attributes = Project::factory()->raw();
 
-    $response = $this->post('/projects', $attributes);
+    $this->get('/projects')->assertRedirect('/');
+    $this->get($project->path())->assertRedirect('/');
+    $this->post('/projects', $attributes)->assertRedirect('/');
+});
 
-    $response->assertRedirect('/');
+test('a user can see their own project', function () {
+    $this->withoutExceptionHandling();
+    $user = User::factory()->create();
+    $this->be($user);
+
+    $project = Project::factory()
+        ->recycle($user)
+        ->create();
+
+    $this->get($project->path())
+        ->assertSee($project->title)
+        ->assertSee($project->description);
+});
+
+test('a user cannot see projects of others', function () {
+    $this->be(User::factory()->create());
+    $project = Project::factory()->create();
+
+    $this->get($project->path())->assertForbidden();
 });
 
 test('a user can create a project', function () {
     $this->withoutExceptionHandling();
-    
+
     $this->actingAs(User::factory()->create());
 
     $attributes = [
@@ -47,14 +69,4 @@ test('a project requires a description', function () {
     $response = $this->post('/projects', $attributes);
 
     $response->assertSessionHasErrors('description');
-});
-
-test('a user view a specific project', function () {
-    $this->withoutExceptionHandling();
-
-    $project = Project::factory()->create();
-
-    $this->get($project->path())
-        ->assertSee($project->title)
-        ->assertSee($project->description);
 });
