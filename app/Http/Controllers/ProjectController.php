@@ -18,15 +18,12 @@ class ProjectController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $attributes = $request->validate([
             'title' => 'required',
-            'description' => 'required'
+            'description' => 'required',
         ]);
 
-        $project = Project::create([
-            'title' => $request->title,
-            'description' => $request->description
-        ]);
+        auth()->user()->projects()->create($attributes);
 
         return redirect('/projects');
     }
