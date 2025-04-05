@@ -26,6 +26,24 @@ test('guest cannot interact with projects', function () {
     $storeResponse->assertRedirect(route('login'));
 });
 
+test('users can create projects', function () {
+    $user = User::factory()->create();
+    $attributes = Project::factory()->raw(['owner_id' => $user->id]);
+
+    $createResponse = $this
+        ->actingAs($user)
+        ->get('/projects/create');
+
+    $storeResponse = $this
+        ->actingAs($user)
+        ->from('/projects/create')
+        ->post('/projects', $attributes);
+
+    $createResponse->assertOk();
+    $storeResponse->assertRedirect('/projects');
+    assertDatabaseHas('projects', $attributes);
+});
+
 test('users access their projects', function() {
     $user = User::factory()->create();
 
@@ -64,18 +82,6 @@ test('users cannot see projects of others', function () {
         ->get($project->path());
 
     $response->assertForbidden();
-});
-
-test('users can create projects', function () {
-    $user = User::factory()->create();
-    $attributes = Project::factory()->raw(['owner_id' => $user->id]);
-
-    $response = $this
-        ->actingAs($user)
-        ->post('/projects', $attributes);
-
-    $response->assertRedirect('/projects');
-    assertDatabaseHas('projects', $attributes);
 });
 
 test('a project requires a title', function () {
