@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Project;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,11 +14,9 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-
-            // change this later....
-            $table->unsignedInteger('project_id');
-
+            $table->foreignIdFor(Project::class);
             $table->text('body');
+            $table->boolean('completed')->default(false);
             $table->timestamps();
         });
     }
