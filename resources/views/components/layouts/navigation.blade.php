@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <a href="{{ route('home') }}">
+                    <a href="{{ route('projects') }}">
                         <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="bird-board logo">
                     </a>
                 </div>
