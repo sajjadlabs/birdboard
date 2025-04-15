@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 
 class ProjectTasksController extends Controller
 {
-    public function store(Project $project)
+    public function store(Request $request, Project $project)
     {
-        $attributes = request()->validate(['body' => 'required']);
+        if (auth()->user()->isNot($project->owner)) {
+            abort(403);
+        }
+
+        $attributes = $request->validate(['body' => 'required']);
 
         $project->addTask($attributes['body']);
 
