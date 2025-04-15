@@ -11,7 +11,7 @@ class ProjectFactory extends Factory
     {
         return [
             'owner_id' => User::factory(),
-            'title' => fake()->sentence,
+            'title' => fake()->sentence(10),
             'description' => fake()->paragraph
         ];
     }
