@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class ProjectController extends Controller
@@ -28,6 +29,8 @@ class ProjectController extends Controller
             'description' => 'required',
         ]);
 
+        $attributes['notes'] = $request['notes'];
+
         $project = auth()->user()->projects()->create($attributes);
 
         return redirect($project->path());
@@ -35,12 +38,21 @@ class ProjectController extends Controller
 
     public function show(Project $project): View
     {
-        if (auth()->user()->id != $project->owner->id) {
-            abort(403);
-        }
+        Gate::authorize('update', $project);
 
         return view('projects.show', [
             'project' => $project
         ]);
+    }
+
+    public function update(Request $request, Project $project)
+    {
+        Gate::authorize('update', $project);
+
+        $project->update([
+            'notes' => $request['notes'],
+        ]);
+
+        return redirect($project->path());
     }
 }

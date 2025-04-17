@@ -4,7 +4,7 @@ use App\Models\Project;
 use App\Models\User;
 use function Pest\Laravel\assertDatabaseHas;
 
-test('guest cannot interact with projects', function () {
+test('guest cannot interact with project', function () {
     $project = Project::factory()->create();
     $attributes = Project::factory()->raw();
 
@@ -26,9 +26,14 @@ test('guest cannot interact with projects', function () {
     $storeResponse->assertRedirect(route('login'));
 });
 
-test('users can create projects', function () {
+test('user can create project', function () {
+    $this->withoutExceptionHandling();
     $user = User::factory()->create();
-    $attributes = Project::factory()->raw(['owner_id' => $user->id]);
+    $attributes = [
+        'title' => fake()->sentence(4),
+        'description' => fake()->text(100),
+        'notes' => fake()->paragraph(),
+    ];
 
     $createResponse = $this
         ->actingAs($user)
@@ -39,17 +44,65 @@ test('users can create projects', function () {
         ->from('/projects/create')
         ->post('/projects', $attributes);
 
-    $getResponse = $this->get('/projects');
-
     $projectPath = Project::where($attributes)->first()->path();
+
+    $getResponse = $this->get($projectPath);
 
     $createResponse->assertOk();
     $storeResponse->assertRedirect($projectPath);
-    $getResponse->assertSee($attributes['title']);
+    $getResponse
+        ->assertSee($attributes['title'])
+        ->assertSee($attributes['description'])
+        ->assertSee($attributes['notes']);
+
     assertDatabaseHas('projects', $attributes);
 });
 
-test('users access their projects', function() {
+test('user can update project', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()
+        ->recycle($user)
+        ->create();
+
+    $attributes = [
+        'title' => fake()->sentence(4),
+        'description' => fake()->text(100),
+        'notes' => fake()->paragraph(),
+    ];
+
+    $patchRequest = $this
+        ->actingAs($user)
+        ->patch($project->path(), $attributes);
+
+    $getRequest = $this
+        ->actingAs($user)
+        ->get($project->path());
+
+    $patchRequest->assertRedirect($project->path());
+    $this->assertDatabaseHas('projects', $attributes);
+    $getRequest->assertSee($attributes);
+
+});
+
+test('user not allowed to update project of others', function () {
+    $user = User::factory()->create();
+    $project = Project::factory()->create();
+
+    $attributes = [
+        'title' => fake()->sentence(4),
+        'description' => fake()->text(100),
+        'notes' => fake()->paragraph(),
+    ];
+
+    $patchRequest = $this
+        ->actingAs($user)
+        ->patch($project->path(), $attributes);
+
+    $patchRequest->assertForbidden();
+    $this->assertDatabaseMissing('projects', $attributes);
+});
+
+test('user access their projects', function () {
     $user = User::factory()->create();
 
     $project = Project::factory()
@@ -63,7 +116,7 @@ test('users access their projects', function() {
     $response->assertSee($project->title);
 });
 
-test('users access their specific project', function () {
+test('user access their specific project', function () {
     $this->withoutExceptionHandling();
     $user = User::factory()->create();
 
@@ -78,7 +131,7 @@ test('users access their specific project', function () {
         ->assertSee($project->description);
 });
 
-test('users cannot see projects of others', function () {
+test('user cannot see project of others', function () {
     $project = Project::factory()->create();
     $user = User::factory()->create();
 

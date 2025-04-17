@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectTasksController extends Controller
 {
     public function store(Request $request, Project $project)
     {
-        if (auth()->user()->isNot($project->owner)) {
-            abort(403);
-        }
+        Gate::authorize('update', $project);
 
         $attributes = $request->validate(['body' => 'required']);
 
@@ -23,9 +22,7 @@ class ProjectTasksController extends Controller
 
     public function update(Request $request, Project $project, Task $task)
     {
-        if (auth()->user()->isNot($task->project->owner)) {
-            abort(403);
-        }
+        Gate::authorize('update', $task->project);
 
         $attributes = $request->validate(['body' => 'required']);
 
