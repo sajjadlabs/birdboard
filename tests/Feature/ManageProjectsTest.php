@@ -39,8 +39,10 @@ test('users can create projects', function () {
         ->from('/projects/create')
         ->post('/projects', $attributes);
 
+    $projectPath = Project::where($attributes)->first()->path();
+
     $createResponse->assertOk();
-    $storeResponse->assertRedirect('/projects');
+    $storeResponse->assertRedirect($projectPath);
     assertDatabaseHas('projects', $attributes);
 });
 
