@@ -51,14 +51,16 @@ test('a task can be created', function () {
 });
 
 test('only the project owner may update task', function () {
+    $user = User::factory()->create();
     $project = Project::factory()->create();
     $task = $project->addTask(fake()->sentence());
     $updateAttributes = Task::factory()->raw();
 
     $response = $this
+        ->actingAs($user)
         ->patch($task->path(), $updateAttributes);
 
-    $response->assertRedirect(route('login'));
+    $response->assertForbidden();
     $this->assertDatabaseMissing('tasks', $updateAttributes);
 });
 
