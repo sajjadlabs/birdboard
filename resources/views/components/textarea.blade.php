@@ -1,4 +1,4 @@
-@props(['name', 'label'])
+@props(['name', 'label', 'value'])
 
 @php
     $default = [
@@ -14,5 +14,5 @@
 @endif
 
 <x-input-field>
-    <textarea {{ $attributes($default) }}></textarea>
+    <textarea {{ $attributes($default) }}>{{ ($value ?? false) }}</textarea>
 </x-input-field>

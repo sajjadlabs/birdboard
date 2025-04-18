@@ -45,6 +45,11 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function edit(Project $project)
+    {
+        return view('projects.edit', compact('project'));
+    }
+
     public function update(Request $request, Project $project)
     {
         Gate::authorize('update', $project);

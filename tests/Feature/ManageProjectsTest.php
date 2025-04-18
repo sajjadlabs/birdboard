@@ -56,17 +56,22 @@ test('user can update project', function () {
         'notes' => fake()->paragraph(),
     ];
 
-    $patchRequest = $this
+    $editRequest = $this
+        ->actingAs($project->owner)
+        ->get($project->path() . '/edit');
+
+    $updateRequest = $this
         ->actingAs($project->owner)
         ->patch($project->path(), $attributes);
 
     $project = Project::where($attributes)->first();
 
-    $getRequest = $this
+    $showRequest = $this
         ->get($project->path());
 
-    $patchRequest->assertRedirect($project->path());
-    $getRequest->assertSee($attributes);
+    $editRequest->assertOk();
+    $updateRequest->assertRedirect($project->path());
+    $showRequest->assertSee($attributes);
     $this->assertDatabaseHas('projects', $attributes);
 });
 

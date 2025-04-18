@@ -1,10 +1,12 @@
 <x-layout>
     <div>
-        <x-breadcurmb>
-            <div>
-                <a href="{{ route('projects') }}">Projects</a> > {{ $project->title }}
-            </div>
-        </x-breadcurmb>
+        <x-breadcrumb>
+            <a href="{{ route('projects') }}">Projects</a> > {{ $project->title }}
+
+            <x-button href="{{ route('projects.edit', compact('project')) }}" value="Edit Project"
+                      class="ml-auto"
+                      :call-to-action="true"/>
+        </x-breadcrumb>
     </div>
     <div class="flex flex-col-reverse gap-10 md:grid md:grid-cols-3">
         <div class="col-span-1 md:col-span-2 space-y-10">

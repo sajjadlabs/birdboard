@@ -1,9 +1,9 @@
 <x-layout>
-    <x-breadcurmb>
+    <x-breadcrumb>
         <span>Projects</span>
 
         <x-button href="{{ route('projects.create') }}" value="Create Project" :call-to-action="true"/>
-    </x-breadcurmb>
+    </x-breadcrumb>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @forelse($projects as $project)
