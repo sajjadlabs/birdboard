@@ -49,9 +49,7 @@ class ProjectController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $project->update([
-            'notes' => $request['notes'],
-        ]);
+        $project->update($request->only(['title', 'description', 'notes']));
 
         return redirect($project->path());
     }

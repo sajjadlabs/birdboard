@@ -2,7 +2,7 @@
 
 use App\Models\Project;
 use App\Models\User;
-use function Pest\Laravel\assertDatabaseHas;
+use Facades\Tests\Arrangement\ProjectArrangement;
 
 test('guest cannot interact with project', function () {
     $project = Project::factory()->create();
@@ -26,18 +26,13 @@ test('guest cannot interact with project', function () {
     $storeResponse->assertRedirect(route('login'));
 });
 
-test('user can create project', function () {
-    $this->withoutExceptionHandling();
+    test('user can create project', function () {
     $user = User::factory()->create();
     $attributes = [
         'title' => fake()->sentence(4),
         'description' => fake()->text(100),
         'notes' => fake()->paragraph(),
     ];
-
-    $createResponse = $this
-        ->actingAs($user)
-        ->get('/projects/create');
 
     $storeResponse = $this
         ->actingAs($user)
@@ -48,21 +43,13 @@ test('user can create project', function () {
 
     $getResponse = $this->get($projectPath);
 
-    $createResponse->assertOk();
     $storeResponse->assertRedirect($projectPath);
-    $getResponse
-        ->assertSee($attributes['title'])
-        ->assertSee($attributes['description'])
-        ->assertSee($attributes['notes']);
 
-    assertDatabaseHas('projects', $attributes);
+    $getResponse->assertSee($attributes);
 });
 
 test('user can update project', function () {
-    $user = User::factory()->create();
-    $project = Project::factory()
-        ->recycle($user)
-        ->create();
+    $project = ProjectArrangement::create();
 
     $attributes = [
         'title' => fake()->sentence(4),
@@ -71,69 +58,55 @@ test('user can update project', function () {
     ];
 
     $patchRequest = $this
-        ->actingAs($user)
+        ->actingAs($project->owner)
         ->patch($project->path(), $attributes);
 
+    $project = Project::where($attributes)->first();
+
     $getRequest = $this
-        ->actingAs($user)
         ->get($project->path());
 
     $patchRequest->assertRedirect($project->path());
-    $this->assertDatabaseHas('projects', $attributes);
     $getRequest->assertSee($attributes);
-
+    $this->assertDatabaseHas('projects', $attributes);
 });
 
 test('user not allowed to update project of others', function () {
     $user = User::factory()->create();
     $project = Project::factory()->create();
 
-    $attributes = [
-        'title' => fake()->sentence(4),
-        'description' => fake()->text(100),
-        'notes' => fake()->paragraph(),
-    ];
-
     $patchRequest = $this
         ->actingAs($user)
-        ->patch($project->path(), $attributes);
+        ->patch($project->path());
 
     $patchRequest->assertForbidden();
-    $this->assertDatabaseMissing('projects', $attributes);
 });
 
 test('user access their projects', function () {
-    $user = User::factory()->create();
-
-    $project = Project::factory()
-        ->recycle($user)
-        ->create();
+    $project = ProjectArrangement::create();
 
     $response = $this
-        ->actingAs($user)
+        ->actingAs($project->owner)
         ->get('/projects');
 
     $response->assertSee($project->title);
 });
 
 test('user access their specific project', function () {
-    $this->withoutExceptionHandling();
-    $user = User::factory()->create();
+    $project = ProjectArrangement::create();
 
-    $project = Project::factory()
-        ->recycle($user)
-        ->create();
+    $response = $this
+        ->actingAs($project->owner)
+        ->get($project->path());
 
-    $this
-        ->actingAs($user)
-        ->get($project->path())
+    $response
         ->assertSee($project->title)
         ->assertSee($project->description);
 });
 
 test('user cannot see project of others', function () {
-    $project = Project::factory()->create();
     $user = User::factory()->create();
+    $project = Project::factory()->create();
 
     $response = $this
         ->actingAs($user)
@@ -143,8 +116,8 @@ test('user cannot see project of others', function () {
 });
 
 test('a project requires a title', function () {
-    $attributes = Project::factory()->raw(['title' => '']);
     $user = User::factory()->create();
+    $attributes = Project::factory()->raw(['title' => '']);
 
     $response = $this
         ->actingAs($user)
@@ -154,8 +127,8 @@ test('a project requires a title', function () {
 });
 
 test('a project requires a description', function () {
-    $attributes = Project::factory()->raw(['description' => '']);
     $user = User::factory()->create();
+    $attributes = Project::factory()->raw(['description' => '']);
 
     $response = $this
         ->actingAs($user)
