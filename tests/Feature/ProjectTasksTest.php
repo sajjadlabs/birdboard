@@ -18,11 +18,10 @@ test('guest cannot create task', function () {
 });
 
 test('only project owner may create task', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $project = Project::factory()->create();
 
     $response = $this
-        ->actingAs($user)
         ->post($project->path() . '/tasks');
 
     $response->assertForbidden();
@@ -45,11 +44,10 @@ test('a task can be created', function () {
 });
 
 test('only the project owner may update task', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $project = ProjectArrangement::withTasks(1)->create();
 
     $response = $this
-        ->actingAs($user)
         ->patch($project->tasks[0]->path());
 
     $response->assertForbidden();

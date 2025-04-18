@@ -26,8 +26,8 @@ test('guest cannot interact with project', function () {
     $storeResponse->assertRedirect(route('login'));
 });
 
-    test('user can create project', function () {
-    $user = User::factory()->create();
+test('user can create project', function () {
+    $this->signIn();
     $attributes = [
         'title' => fake()->sentence(4),
         'description' => fake()->text(100),
@@ -35,7 +35,6 @@ test('guest cannot interact with project', function () {
     ];
 
     $storeResponse = $this
-        ->actingAs($user)
         ->from('/projects/create')
         ->post('/projects', $attributes);
 
@@ -72,11 +71,10 @@ test('user can update project', function () {
 });
 
 test('user not allowed to update project of others', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $project = Project::factory()->create();
 
     $patchRequest = $this
-        ->actingAs($user)
         ->patch($project->path());
 
     $patchRequest->assertForbidden();
@@ -105,33 +103,30 @@ test('user access their specific project', function () {
 });
 
 test('user cannot see project of others', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $project = Project::factory()->create();
 
     $response = $this
-        ->actingAs($user)
         ->get($project->path());
 
     $response->assertForbidden();
 });
 
 test('a project requires a title', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $attributes = Project::factory()->raw(['title' => '']);
 
     $response = $this
-        ->actingAs($user)
         ->post('/projects', $attributes);
 
     $response->assertSessionHasErrors('title');
 });
 
 test('a project requires a description', function () {
-    $user = User::factory()->create();
+    $this->signIn();
     $attributes = Project::factory()->raw(['description' => '']);
 
     $response = $this
-        ->actingAs($user)
         ->post('/projects', $attributes);
 
     $response->assertSessionHasErrors('description');
