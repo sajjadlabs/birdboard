@@ -75,6 +75,18 @@ test('user can update project', function () {
     $this->assertDatabaseHas('projects', $attributes);
 });
 
+test('user update general notes', function () {
+    $project = Project::factory()->create();
+    $attributes = ['notes' => fake()->sentence];
+
+    $updateResponse = $this
+        ->actingAs($project->owner)
+        ->patch($project->path(), $attributes);
+
+    $updateResponse->assertRedirect($project->path());
+    $this->assertDatabaseHas('projects', $attributes);
+});
+
 test('user not allowed to update project of others', function () {
     $this->signIn();
     $project = Project::factory()->create();

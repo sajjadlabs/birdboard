@@ -53,11 +53,16 @@
                                   oninput="onGrow(this)">{{ $project->notes }}</textarea>
                     </x-card>
 
+                    @if($errors->any())
+                        @foreach($errors->all() as $error)
+                            <p class="text-sm text-red-600">{{ $error }}</p>
+                        @endforeach
+                    @endif
+
                     <x-button button call-to-action type="submit"
+                              class="mt-3"
                               value="Save"/>
-                    @foreach($errors as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
+
                 </form>
 
                 <!-- Auto resize and scroll of general notes -->

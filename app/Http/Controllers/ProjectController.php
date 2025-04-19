@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectStoreRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,27 +24,16 @@ class ProjectController extends Controller
         return view('projects.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(ProjectStoreRequest $form): RedirectResponse
     {
-        $attributes = $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-        ]);
-
-        $attributes['notes'] = $request['notes'];
-
-        $project = auth()->user()->projects()->create($attributes);
-
-        return redirect($project->path());
+        return redirect($form->store()->path());
     }
 
     public function show(Project $project): View
     {
         Gate::authorize('update', $project);
 
-        return view('projects.show', [
-            'project' => $project
-        ]);
+        return view('projects.show', compact('project'));
     }
 
     public function edit(Project $project)
@@ -50,12 +41,8 @@ class ProjectController extends Controller
         return view('projects.edit', compact('project'));
     }
 
-    public function update(Request $request, Project $project)
+    public function update(ProjectUpdateRequest $form)
     {
-        Gate::authorize('update', $project);
-
-        $project->update($request->only(['title', 'description', 'notes']));
-
-        return redirect($project->path());
+        return redirect($form->save()->path());
     }
 }
