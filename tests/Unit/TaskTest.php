@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use App\Models\Task;
+use Facades\Tests\Arrangement\ProjectArrangement;
 
 it('belongs to a project', function () {
     $project = Project::factory()->create();
@@ -21,4 +22,14 @@ it('has a path', function () {
         ->create();
 
     $this->assertEquals($task->path(), "/projects/$project->id/tasks/$task->id");
+});
+
+it('can be completed', function () {
+    $task = Task::factory()->create();
+
+    $this->assertFalse($task->completed);
+
+    $task->complete();
+
+    $this->assertTrue($task->completed);
 });

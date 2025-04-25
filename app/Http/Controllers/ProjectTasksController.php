@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -24,12 +25,13 @@ class ProjectTasksController extends Controller
     {
         Gate::authorize('update', $task->project);
 
-        $attributes = $request->validate(['body' => 'required']);
+        $attributes = $request->validate(['body' => ['required']]);
 
-        $task->update([
-           'body' => $attributes['body'],
-           'completed' => $request->has('completed')
-        ]);
+        $task->update(['body' => $attributes['body']]);
+
+        if ($request->has('completed')) {
+            $task->complete();
+        }
 
         return redirect($project->path());
     }

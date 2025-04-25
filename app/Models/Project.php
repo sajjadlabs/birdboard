@@ -13,6 +13,7 @@ class Project extends Model
 
     protected $guarded = [];
 
+
     public function path(): string
     {
         return "/projects/{$this->id}";
@@ -28,13 +29,23 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function addTask($body)
+    public function addTask($body): Task
     {
-        return $this->tasks()->create(compact('body'));
+        $task = $this->tasks()->create(compact('body'));
+
+        return $task;
     }
 
     public function activities(): HasMany
     {
         return $this->hasMany(Activity::class);
+    }
+
+    public function recordActivity(string $type): void
+    {
+        Activity::create([
+            'project_id' => $this->id,
+            'description' => $type
+        ]);
     }
 }

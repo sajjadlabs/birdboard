@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Project;
-use App\Models\User;
 use Facades\Tests\Arrangement\ProjectArrangement;
 
 test('guest cannot interact with project', function () {
