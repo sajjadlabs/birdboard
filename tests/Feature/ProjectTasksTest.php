@@ -65,6 +65,43 @@ test('a task can be updated', function () {
     assertDatabaseHas('tasks', $attributes);
 });
 
+test('a task can be completed', function () {
+    $project = ProjectArrangement::withTasks(1)->create();
+    $attributes = [
+        'body' => 'foobar',
+        'completed' => true
+    ];
+
+    $this
+        ->actingAs($project->owner)
+        ->patch($project->tasks[0]->path(), $attributes);
+
+    assertDatabaseHas('tasks', $attributes);
+});
+
+test('a task can be marked as incomplete', function () {
+    $this->withoutExceptionHandling();
+    $project = ProjectArrangement::withTasks(1)->create();
+
+    $this
+        ->actingAs($project->owner)
+        ->patch($project->tasks[0]->path(), [
+            'body'      => 'foobar',
+            'completed' => true
+        ]);
+
+    $this
+        ->patch($project->tasks[0]->path(), [
+            'body'      => 'foobar',
+            'completed' => false
+        ]);
+
+    $this->assertDatabaseHas('tasks', [
+        'body'      => 'foobar',
+        'completed' => false
+    ]);
+});
+
 test('task requires a body', function () {
     $project = ProjectArrangement::create();
     $task = Task::factory()->raw(['body' => '']);

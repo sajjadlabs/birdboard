@@ -33,3 +33,13 @@ it('can be completed', function () {
 
     $this->assertTrue($task->completed);
 });
+
+it('can be marked as incomplete', function () {
+    $task = Task::factory()->create(['completed' => true]);
+
+    $this->assertTrue($task->completed);
+
+    $task->incomplete();
+
+    $this->assertFalse($task->completed);
+});
