@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Project;
+use App\Models\Task;
 use Facades\Tests\Arrangement\ProjectArrangement;
 
 test('creating a project', function () {
@@ -21,9 +22,14 @@ test('updating a project', function () {
 
 test('creating a task', function () {
     $project = ProjectArrangement::withTasks(1)->create();
+    $taskBody = $project->tasks[0]->body;
 
     $this->assertCount(2, $project->activities);
-    $this->assertEquals('created_task', $project->activities->last()->description);
+
+    tap($project->activities->last(), function ($activity) {
+        $this->assertEquals('created_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
+    });
 });
 
 test('completing a task', function () {
@@ -32,14 +38,18 @@ test('completing a task', function () {
     $this
         ->actingAs($project->owner)
         ->patch($project->tasks[0]->path(), [
-            'body'      => 'foobar',
+            'body' => 'foobar',
             'completed' => true
         ]);
 
     $project->refresh();
 
     $this->assertCount(3, $project->activities);
-    $this->assertEquals('completed_task', $project->activities->last()->description);
+
+    tap($project->activities->last(), function ($activity) {
+        $this->assertEquals('completed_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
+    });
 });
 
 test('incompleting a task', function () {
@@ -53,19 +63,23 @@ test('incompleting a task', function () {
         ]);
 
     $this->patch($project->tasks[0]->path(), [
-            'body' => 'foobar',
-            'completed' => false
-        ]);
+        'body' => 'foobar',
+        'completed' => false
+    ]);
 
     $this->assertCount(4, $project->activities);
-    $this->assertEquals('uncompleted_task', $project->activities->last()->description);
+
+    tap($project->activities->last(), function ($activity) {
+        $this->assertEquals('uncompleted_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
+    });
 });
 
 test('deleting a task', function () {
-   $project = ProjectArrangement::withTasks(1)->create();
+    $project = ProjectArrangement::withTasks(1)->create();
 
-   $project->tasks[0]->delete();
+    $project->tasks[0]->delete();
 
-   $this->assertCount(3, $project->activities);
-   $this->assertEquals('deleted_task', $project->activities->last()->description);
+    $this->assertCount(3, $project->activities);
+    $this->assertEquals('deleted_task', $project->activities->last()->description);
 });
