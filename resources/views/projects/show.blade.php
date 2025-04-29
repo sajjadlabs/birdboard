@@ -102,10 +102,19 @@
         </div>
 
         <!--Sidebar-->
-        <div>
+        <div class="space-y-4">
             <x-card>
                 <x-card-heading>{{ str($project->title)->words(10)}}</x-card-heading>
                 <p class="h-content">{{ str($project->description)->limit() }}</p>
+            </x-card>
+
+            <x-card>
+                @foreach($project->activities as $activity)
+                    <li class="{{ $loop->last ? '' : 'mb-1' }} text-sm list-none">
+                        @include("projects.activity.{$activity->description}")
+                        <span class="text-gray-400">{{ $activity->created_at->diffForHumans(null, true) }}</span>
+                    </li>
+                @endforeach
             </x-card>
         </div>
 
