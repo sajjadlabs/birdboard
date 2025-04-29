@@ -12,6 +12,7 @@ class Project extends Model
     use HasFactory;
 
     protected $guarded = [];
+    public array $old = [];
 
 
     public function path(): string
@@ -43,6 +44,12 @@ class Project extends Model
 
     public function recordActivity(string $description): void
     {
-        $this->activities()->create(compact('description'));
+        $this->activities()->create([
+            'description' => $description,
+            'changes' => $description === 'updated' ? [
+                'before' => array_diff($this->old, $this->getAttributes()),
+                'after' => $this->getChanges()
+            ] : null
+        ]);
     }
 }

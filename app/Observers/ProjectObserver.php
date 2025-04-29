@@ -13,6 +13,10 @@ class ProjectObserver
         $project->recordActivity('created');
     }
 
+    public function updating(Project $project) : void
+    {
+        $project->old = $project->getOriginal();
+    }
 
     public function updated(Project $project): void
     {

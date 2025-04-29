@@ -8,16 +8,29 @@ test('creating a project', function () {
     $project = Project::factory()->create();
 
     $this->assertCount(1, $project->activities);
-    $this->assertEquals('created', $project->activities->last()->description);
+    tap($project->activities->last(), function ($activity) {
+    $this->assertEquals('created', $activity->description);
+        $this->assertNull($activity->changes);
+    });
 });
 
 test('updating a project', function () {
     $project = Project::factory()->create();
+    $originalTitle = $project->title;
 
-    $project->update(['title' => fake()->sentence]);
+    $project->update(['title' => 'Change']);
 
     $this->assertCount(2, $project->activities);
-    $this->assertEquals('updated', $project->activities->last()->description);
+
+    $expected = [
+        'before' => ['title' => $originalTitle],
+        'after' => ['title' => 'Change']
+    ];
+
+    tap($project->activities->last(), function ($activity) use ($expected) {
+        $this->assertEquals('updated', $activity->description);
+        $this->assertEquals($expected, $activity->changes);
+    });
 });
 
 test('creating a task', function () {
