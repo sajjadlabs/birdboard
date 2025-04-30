@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\RecordsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,12 +12,15 @@ use function Symfony\Component\String\s;
 class Task extends Model
 {
     use HasFactory;
+    use RecordsActivity;
     protected $guarded = [];
 
     protected $touches = ['project'];
     protected $casts = [
         'completed' => 'boolean'
     ];
+
+    protected static array $recordableEvents = ['created', 'deleted'];
 
     public function complete(): void
     {
@@ -44,18 +48,5 @@ class Task extends Model
     public function path(): string
     {
         return $this->project->path() . "/tasks/" . $this->id;
-    }
-
-    public function activities(): MorphMany
-    {
-        return $this->morphMany(Activity::class, 'subject');
-    }
-
-    public function recordActivity(string $description): void
-    {
-        $this->activities()->create([
-            'project_id' => $this->project_id,
-            'description' => $description
-        ]);
     }
 }
