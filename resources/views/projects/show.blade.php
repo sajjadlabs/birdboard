@@ -5,9 +5,19 @@
                 <a href="{{ route('projects') }}">Projects</a> > {{ $project->title }}
             </span>
 
-            <x-button href="{{ route('projects.edit', compact('project')) }}" value="Edit Project"
-                      class="ml-auto"
-                      :call-to-action="true"/>
+            <div class="flex items-center ml-auto">
+                @foreach($project->members as $member)
+                    <img class="w-8 mr-2 rounded-full" src="{{ gravatar_url($member->email) }}"
+                         alt="{{ $member->name }}'s avatar">
+                @endforeach
+                    <img class="w-8 rounded-full" src="{{ gravatar_url($member->email) }}"
+                         alt="{{ $project->owner->name }}'s avatar">
+
+
+                <x-button href="{{ route('projects.edit', compact('project')) }}" value="Edit Project"
+                          class="ml-4"
+                          :call-to-action="true"/>
+            </div>
         </x-breadcrumb>
     </div>
     <div class="flex flex-col-reverse gap-10 md:grid md:grid-cols-3">
