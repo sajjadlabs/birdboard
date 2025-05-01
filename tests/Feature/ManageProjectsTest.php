@@ -47,7 +47,7 @@ test('user can create project', function () {
     $getResponse->assertSee($attributes);
 });
 
-test('unauthorized users cannot delete a project', function () {
+test('unauthorized user cannot delete a project', function () {
     $project = ProjectArrangement::create();
     $user = User::factory()->create();
 
@@ -63,15 +63,15 @@ test('unauthorized users cannot delete a project', function () {
 
 test('a user can delete a project', function () {
     $this->withoutExceptionHandling();
-   $project = ProjectArrangement::create();
+    $project = ProjectArrangement::create();
 
-   $response = $this
-       ->actingAs($project->owner)
-       ->delete($project->path());
+    $response = $this
+        ->actingAs($project->owner)
+        ->delete($project->path());
 
-   $response->assertRedirect(route('projects'));
+    $response->assertRedirect(route('projects'));
 
-   $this->assertDatabaseMissing('projects', $project->only('id'));
+    $this->assertDatabaseMissing('projects', $project->only('id'));
 });
 
 test('user can update project', function () {
@@ -132,6 +132,12 @@ test('user access their projects', function () {
         ->get('/projects');
 
     $response->assertSee($project->title);
+});
+
+test('a user can see all projects they have been invited to on their dashboard', function () {
+    $project = tap(ProjectArrangement::create())->invite($this->signIn());
+
+    $this->get('/projects')->assertSee($project->title);
 });
 
 test('user access their specific project', function () {

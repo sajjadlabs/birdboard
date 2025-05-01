@@ -8,8 +8,18 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @forelse($projects as $project)
             <x-card :clickable="true" href="{{ $project->path() }}">
-                <x-card-heading>{{ str($project->title)->words(10)}}</x-card-heading>
-                <p class="h-content">{{ str($project->description)->limit(50) }}</p>
+                <x-card-heading>{{ $project->title }}</x-card-heading>
+                <p class="h-content mb-auto">{{ str($project->description)->limit(50) }}</p>
+
+                <form class="w-auto" action="{{ $project->path() }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+
+                    <div class="text-right w-auto">
+                        <button class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md" type="submit">Delete</button>
+                    </div>
+
+                </form>
             </x-card>
         @empty
             <x-card class="col-span-full">

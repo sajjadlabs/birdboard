@@ -26,3 +26,12 @@ it('can have tasks', function () {
     assertCount(1, $project->tasks);
     assertTrue($project->tasks->contains($task));
 });
+
+it('can invite a user', function () {
+    $project = Project::factory()->create();
+    $user = User::factory()->create();
+
+    $project->invite($user);
+
+    $this->assertTrue($project->members->contains($user));
+});

@@ -1,7 +1,7 @@
 @props(['clickable'])
 
 @php
-$class = "p-5 bg-white rounded-md shadow-sm border border-transparent hover:border-gray-200";
+$class = "p-5 flex flex-col bg-white rounded-md shadow-sm border border-transparent hover:border-gray-200";
 @endphp
 
 @if ($clickable ?? false)

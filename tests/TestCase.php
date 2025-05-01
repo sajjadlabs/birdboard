@@ -7,10 +7,12 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    public function signIn(?User $user = null): void
+    public function signIn(?User $user = null): User
     {
         $user = $user ?? User::factory()->create();
 
         $this->actingAs($user);
+
+        return $user;
     }
 }
