@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Activity;
+use Arr;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait RecordsActivity
@@ -34,12 +35,13 @@ trait RecordsActivity
         return "{$description}_" . strtolower(class_basename($this));
     }
 
-    public function recordActivity(string $description): void
+    protected function recordActivity(string $description): void
     {
         $this->activities()->create([
+            'user_id'     => ($this->project ?? $this)->owner_id,
             'description' => $description,
-            'project_id' => class_basename($this) === 'Project' ? $this->id : $this->project_id,
-            'changes' => $this->activityChanges()
+            'project_id'  => class_basename($this) === 'Project' ? $this->id : $this->project_id,
+            'changes'     => $this->activityChanges()
         ]);
     }
 
@@ -47,8 +49,8 @@ trait RecordsActivity
     {
         if ($this->wasChanged()) {
             return [
-                'before' => array_diff($this->old, $this->getAttributes()),
-                'after' => $this->getChanges()
+                'before' => Arr::except(array_diff($this->old, $this->getAttributes()), ['updated_at']),
+                'after' => Arr::except($this->getChanges(), ['updated_at'])
             ];
         }
         return null;

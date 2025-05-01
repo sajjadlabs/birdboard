@@ -10,8 +10,8 @@ class ProjectStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required'],
-            'description' => ['sometimes', 'required'],
+            'title' => ['required'],
+            'description' => ['required'],
             'notes' => ['nullable'],
         ];
     }

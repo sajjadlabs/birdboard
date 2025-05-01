@@ -18,8 +18,8 @@ class ProjectUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required'],
-            'description' => ['sometimes', 'required'],
+            'title' => ['required', 'sometimes'],
+            'description' => ['required', 'sometimes'],
             'notes' => ['nullable'],
         ];
     }

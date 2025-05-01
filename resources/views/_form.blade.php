@@ -8,11 +8,11 @@
             <x-input label="Title" name="title" value="{{ $project->title ?? '' }}"/>
         </div>
         <div class="col-span-full">
-            <x-textarea label="Description" name="description" value="{{ $project->description ?? '' }}"/>
+            <x-textarea label="Description" name="description">{{ $project->description ?? '' }}</x-textarea>
         </div>
 
         <div class="col-span-full">
-            <x-textarea label="Notes" name="notes" value="{{ $project->notes ?? '' }}"/>
+            <x-textarea label="Notes" name="notes">{{ $project->notes ?? '' }}</x-textarea>
         </div>
     </div>
 </div>
