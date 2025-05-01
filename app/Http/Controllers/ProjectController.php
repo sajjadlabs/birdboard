@@ -45,4 +45,13 @@ class ProjectController extends Controller
     {
         return redirect($form->save()->path());
     }
+
+    public function destroy(Project $project)
+    {
+        Gate::authorize('update', $project);
+
+        $project->delete();
+
+        return redirect(route('projects'));
+    }
 }

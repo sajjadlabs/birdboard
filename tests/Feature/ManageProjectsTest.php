@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Project;
+use App\Models\User;
 use Facades\Tests\Arrangement\ProjectArrangement;
 
 test('guest cannot interact with project', function () {
@@ -44,6 +45,33 @@ test('user can create project', function () {
     $storeResponse->assertRedirect($projectPath);
 
     $getResponse->assertSee($attributes);
+});
+
+test('unauthorized users cannot delete a project', function () {
+    $project = ProjectArrangement::create();
+    $user = User::factory()->create();
+
+    $guestResponse = $this->delete($project->path());
+
+    $this->actingAs($user);
+
+    $authResponse = $this->delete($project->path());
+
+    $guestResponse->assertRedirect(route('login'));
+    $authResponse->assertForbidden();
+});
+
+test('a user can delete a project', function () {
+    $this->withoutExceptionHandling();
+   $project = ProjectArrangement::create();
+
+   $response = $this
+       ->actingAs($project->owner)
+       ->delete($project->path());
+
+   $response->assertRedirect(route('projects'));
+
+   $this->assertDatabaseMissing('projects', $project->only('id'));
 });
 
 test('user can update project', function () {
