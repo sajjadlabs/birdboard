@@ -1,5 +1,5 @@
-@props(['name'])
+@props(['name', 'bag'])
 
-@error($name)
-    <span class="text-sm text-red-500">{{ $message }}</span>
-@enderror
+@if($errors->{$bag ?? 'default'}->any())
+    <span class="text-sm text-red-500">{{ $errors->{$bag ?? 'default'}->first($name) }}</span>
+@endif

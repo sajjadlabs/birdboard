@@ -5,12 +5,14 @@ use App\Models\User;
 use Facades\Tests\Arrangement\ProjectArrangement;
 
 test('non-owners cannot invite a user', function () {
-    $this
-        ->actingAs($this->signIn())
-        ->post(ProjectArrangement::create()->path() . '/invitations', [
-            'email' => User::factory()->create()->email
-        ])
-        ->assertForbidden();
+    $user = $this->signIn();
+    $project = ProjectArrangement::create();
+
+    $this->assertInvitationForbidden($user, $project);
+
+    $project->invite($user);
+
+    $this->assertInvitationForbidden($user, $project);
 });
 
 test('a project owner can invite a user', function () {
@@ -34,7 +36,7 @@ test('email address must be associated with a Birdboard account', function () {
         'email' => 'nonuser@email.com'
     ]);
 
-    $response->assertSessionHasErrors(['email' => 'The user must have a birdboard account']);
+    $response->assertSessionHasErrors(['email' => 'The user must have a birdboard account'], null, 'invitation');
 });
 
 test('invited users may change project details', function () {

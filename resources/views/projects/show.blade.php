@@ -10,8 +10,9 @@
                     <img class="w-8 mr-2 rounded-full" src="{{ gravatar_url($member->email) }}"
                          alt="{{ $member->name }}'s avatar">
                 @endforeach
-                    <img class="w-8 rounded-full" src="{{ gravatar_url($member->email) }}"
-                         alt="{{ $project->owner->name }}'s avatar">
+
+                <img class="w-8 rounded-full" src="{{ gravatar_url($project->owner->email) }}"
+                     alt="{{ $project->owner->name }}'s avatar">
 
 
                 <x-button href="{{ route('projects.edit', compact('project')) }}" value="Edit Project"
@@ -111,9 +112,22 @@
 
         <!--Sidebar-->
         <div class="space-y-4">
-            <x-card>
-                <x-card-heading>{{ str($project->title)->words(10)}}</x-card-heading>
-                <p class="h-content">{{ str($project->description)->limit() }}</p>
+            <x-card :clickable="true" href="{{ $project->path() }}">
+                <x-card-heading>{{ $project->title }}</x-card-heading>
+                <p class="h-content mb-auto">{{ str($project->description) }}</p>
+
+                <form class="w-auto" action="{{ $project->path() }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+
+                    <div class="text-right w-auto">
+                        <button
+                            class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md"
+                            type="submit">Delete
+                        </button>
+                    </div>
+
+                </form>
             </x-card>
 
             <x-card>
@@ -124,6 +138,23 @@
                     </li>
                 @endforeach
             </x-card>
+
+            @can('manage', $project)
+                <x-card href="{{ $project->path() }}">
+                    <x-card-heading>Invite a user</x-card-heading>
+                    <form class="w-auto" action="{{ $project->path() . '/invitations' }}" method="POST">
+                        @csrf
+
+                        <div class="text-left w-auto space-y-2">
+                            <x-input name="email" placeholder="Enter user email address" autocomplete="off"/>
+                            <div>
+                                <x-error name="email" bag="invitation"/>
+                            </div>
+                            <x-button button type="submit" call-to-action value="Invite"/>
+                        </div>
+                    </form>
+                </x-card>
+            @endcan
         </div>
 
     </div>

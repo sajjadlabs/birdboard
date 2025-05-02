@@ -16,5 +16,3 @@
 <x-input-field>
     <input {{ $attributes($default) }}>
 </x-input-field>
-
-<x-error :$name/>

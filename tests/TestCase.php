@@ -15,4 +15,14 @@ abstract class TestCase extends BaseTestCase
 
         return $user;
     }
+
+    public function assertInvitationForbidden($user, $project): void
+    {
+            $this
+                ->actingAs($user)
+                ->post($project->path() . '/invitations', [
+                    'email' => User::factory()->create()->email
+                ])
+                ->assertForbidden();
+    }
 }
