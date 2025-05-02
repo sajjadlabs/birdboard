@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectInvitationController;
 use App\Http\Controllers\ProjectTasksController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/{project}', [ProjectController::class, 'show']);
     Route::patch('/projects/{project}', [ProjectController::class, 'update']);
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
+
+    Route::post('/projects/{project}/invitations', [ProjectInvitationController::class, 'store']);
 
     Route::post('/projects/{project}/tasks', [ProjectTasksController::class, 'store'])->name('tasks.store');
     Route::patch('/projects/{project}/tasks/{task}', [ProjectTasksController::class, 'update']);
