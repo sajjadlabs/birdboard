@@ -1,2 +1,26 @@
 @import "tailwindcss";
 @source "../views";
+
+.light-theme{
+    --default-color: #212121;
+    --bg-nav-color: white;
+    --bg-page-color: #f1f1f1;
+    --bg-card-color: white;
+    --text-muted-color: oklch(55.1% 0.027 264.364);
+}
+
+.dark-theme {
+    --default-color: white;
+    --bg-nav-color: #212121;
+    --bg-page-color: #424242;
+    --bg-card-color: #212121;
+    --text-muted-color: oklch(70.7% 0.022 261.325);
+}
+
+@theme inline {
+    --color-default: var(--default-color);
+    --color-nav: var(--bg-nav-color);
+    --color-page: var(--bg-page-color);
+    --color-card: var(--bg-card-color);
+    --color-muted: var(--text-muted-color);
+}

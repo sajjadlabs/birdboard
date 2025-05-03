@@ -2,7 +2,7 @@
 
 @php
     $class = "flex cursor-pointer items-center justify-center px-3 py-2 border border-transparent text-sm leading-4 font-semibold rounded-md focus:outline-none transition ease-in-out duration-150";
-    $class .= ($callToAction ?? false) ? ' bg-indigo-600 font-semibold px-3 py-2 text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600': ' bg-white text-gray-500 hover:text-gray-700';
+    $class .= ($callToAction ?? false) ? ' bg-indigo-600 font-semibold px-3 py-2 text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600': ' bg-page text-default hover:text-muted';
 
     $default = compact('class');
 @endphp

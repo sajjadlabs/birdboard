@@ -2,7 +2,7 @@
 
 @php
     $default = [
-        'class' => 'block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6',
+        'class' => 'block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-default placeholder:text-muted focus:outline-none sm:text-sm/6',
         'type'  => $type,
         'name'  => $name,
         'id'    => $name,

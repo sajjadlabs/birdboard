@@ -10,7 +10,7 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased min-h-screen space-y-10 pb-10 bg-gray-100">
+    <body class="light-theme font-sans antialiased min-h-screen space-y-10 pb-10 bg-page text-default">
             <x-layouts.navigation/>
 
             <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

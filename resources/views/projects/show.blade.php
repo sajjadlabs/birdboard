@@ -35,8 +35,9 @@
 
                             <div class="flex items-center">
                                 <input type="text" value="{{ $task->body }}"
-                                       class="w-full focus:outline-none {{ $task->completed ? 'text-gray-400' : '' }}"
-                                       name="body">
+                                       class="w-full bg-card focus:outline-none {{ $task->completed ? 'text-muted' : '' }}"
+                                       name="body"
+                                       autocomplete="off">
 
                                 <input type="checkbox" name="completed" class="cursor-pointer w-4 h-4"
                                        onChange="this.form.submit()" {{ $task->completed ? 'checked' : ''}}>
@@ -135,7 +136,7 @@
                 @foreach($project->activities as $activity)
                     <li class="{{ $loop->last ? '' : 'mb-1' }} text-sm list-none">
                         @include("projects.activity.{$activity->description}")
-                        <span class="text-gray-400">{{ $activity->created_at->diffForHumans(null, true) }}</span>
+                        <span class="text-muted">{{ $activity->created_at->diffForHumans(null, true) }}</span>
                     </li>
                 @endforeach
             </x-card>
@@ -147,7 +148,7 @@
                         @csrf
 
                         <div class="text-left w-auto space-y-2">
-                            <x-input name="email" placeholder="Enter user email address" autocomplete="off"/>
+                            <x-input name="email" class="bg-page" placeholder="Enter user email address" autocomplete="off"/>
                             <div>
                                 <x-error name="email" bag="invitation"/>
                             </div>
