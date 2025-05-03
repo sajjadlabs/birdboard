@@ -112,22 +112,23 @@
 
         <!--Sidebar-->
         <div class="space-y-4">
-            <x-card :clickable="true" href="{{ $project->path() }}">
+            <x-card href="{{ $project->path() }}">
                 <x-card-heading>{{ $project->title }}</x-card-heading>
                 <p class="h-content mb-auto">{{ str($project->description) }}</p>
 
-                <form class="w-auto" action="{{ $project->path() }}" method="POST">
-                    @csrf
-                    @method('DELETE')
+                @can('manage', $project)
+                    <form class="w-auto" action="{{ $project->path() }}" method="POST">
+                        @csrf
+                        @method('DELETE')
 
-                    <div class="text-right w-auto">
-                        <button
-                            class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md"
-                            type="submit">Delete
-                        </button>
-                    </div>
-
-                </form>
+                        <div class="text-right w-auto">
+                            <button
+                                class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md"
+                                type="submit">Delete
+                            </button>
+                        </div>
+                    </form>
+                @endcan()
             </x-card>
 
             <x-card>

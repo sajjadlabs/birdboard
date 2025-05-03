@@ -11,15 +11,16 @@
                 <x-card-heading>{{ $project->title }}</x-card-heading>
                 <p class="h-content mb-auto">{{ str($project->description)->limit(50) }}</p>
 
-                <form class="w-auto" action="{{ $project->path() }}" method="POST">
-                    @csrf
-                    @method('DELETE')
+                @can('manage', $project)
+                    <form class="w-auto" action="{{ $project->path() }}" method="POST">
+                        @csrf
+                        @method('DELETE')
 
-                    <div class="text-right w-auto">
-                        <button class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md" type="submit">Delete</button>
-                    </div>
-
-                </form>
+                        <div class="text-right w-auto">
+                            <button class="text-red-400 hover:text-red-500 transition-colors duration-300 text-sm cursor-pointer rounded-md" type="submit">Delete</button>
+                        </div>
+                    </form>
+                @endcan
             </x-card>
         @empty
             <x-card class="col-span-full">

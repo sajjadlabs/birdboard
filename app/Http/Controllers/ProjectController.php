@@ -48,7 +48,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        Gate::authorize('update', $project);
+        Gate::authorize('manage', $project);
 
         $project->delete();
 

@@ -49,16 +49,16 @@ test('user can create project', function () {
 
 test('unauthorized user cannot delete a project', function () {
     $project = ProjectArrangement::create();
-    $user = User::factory()->create();
 
-    $guestResponse = $this->delete($project->path());
+    $this->delete($project->path())->assertRedirect(route('login'));
 
-    $this->actingAs($user);
+    $user = $this->signIn();
 
-    $authResponse = $this->delete($project->path());
+    $this->delete($project->path())->assertForbidden();
 
-    $guestResponse->assertRedirect(route('login'));
-    $authResponse->assertForbidden();
+    $project->invite($user);
+
+    $this->delete($project->path())->assertForbidden();
 });
 
 test('a user can delete a project', function () {
